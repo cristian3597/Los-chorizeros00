@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="assets/estilos.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css"
+        integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <title>Reto 10 Softparty</title>
+</head>
+
+<body>
+    <div class="content-form">
+        <div class="formulario column">
+            <h1>Formulario de Registro</h1>
+            <form action="#" method="post" id="registroForm">
+                <div class="campo-form">
+                    <label for="nombre">Nombre:</label>
+                    <input type="text" id="nombre" name="nombre" placeholder="Nombre" required>
+                </div>
+                <div class="campo-form">
+                    <label for="apellido">Apellido:</label>
+                    <input type="text" id="apellido" name="apellido" placeholder="Apellido" required>
+                </div>
+                <div class="campo-form">
+                    <label for="email">Correo Electrónico:</label>
+                    <input type="email" id="email" name="email" placeholder="Correo Electrónico" required>
+                </div>
+                <button class="btn-enviar" type="submit">Enviar</button>
+            </form>
+        </div>
+        <div class="apartado column" style="background-color: #0f2cf959;">
+            <img src="assets/images/desarrollador.svg" alt="" srcset="">
+        </div>
+    </div>
+    <div class="tabla-resultados">
+        <h2 class="text-center">Usuarios registrados</h2>
+
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th scope="col">Nombre</th>
+                    <th scope="col">Apellido</th>
+                    <th scope="col">Correo Electrónico</th>
+                </tr>
+            </thead>
+            <tbody id="tabla-body">
+                <tr>
+                    <td colspan="3" class="text-muted text-center">Aún no hay registros</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</body>
+
+</html>
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+    integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+    crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js"
+    integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+    crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js"
+    integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+    crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+    (function () {
+        const form = document.getElementById('registroForm');
+        const tbody = document.getElementById('tabla-body');
+        const inputNombre = document.getElementById('nombre');
+        const inputApellido = document.getElementById('apellido');
+        const inputEmail = document.getElementById('email');
+
+        
+        const trim = (s) => (s || '').trim();
+        const isValidEmail = (email) =>
+            /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+
+        form.addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            const nombre = trim(inputNombre.value);
+            const apellido = trim(inputApellido.value);
+            const email = trim(inputEmail.value);
+
+            if (!nombre || !apellido || !email) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Campos incompletos',
+                    text: 'Por favor completa todos los campos.',
+                    confirmButtonText: 'Entendido'
+                });
+                return;
+            }
+
+            if (!isValidEmail(email)) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Correo no válido',
+                    text: 'Revisa el formato del correo electrónico.',
+                    confirmButtonText: 'Ok'
+                });
+                return;
+            }
+
+            if (tbody.children.length === 1) {
+                const firstRow = tbody.children[0];
+                const isPlaceholder =
+                    firstRow.children.length === 1 &&
+                    firstRow.children[0].textContent.includes('Aún no hay registros');
+                if (isPlaceholder) {
+                    tbody.removeChild(firstRow);
+                }
+            }
+
+            const tr = document.createElement('tr');
+
+            const tdNombre = document.createElement('td');
+            tdNombre.textContent = nombre;
+
+            const tdApellido = document.createElement('td');
+            tdApellido.textContent = apellido;
+
+            const tdEmail = document.createElement('td');
+            tdEmail.textContent = email;
+
+            tr.appendChild(tdNombre);
+            tr.appendChild(tdApellido);
+            tr.appendChild(tdEmail);
+
+            tbody.appendChild(tr);
+
+            form.reset();
+            inputNombre.focus();
+
+            Swal.fire({
+                icon: 'success',
+                title: '🎉 ¡Te has registrado con éxito!',
+                html: `
+                    <p style="font-size: 1.2rem; margin: 15px 0;">
+                        <strong>${nombre} ${apellido}</strong>
+                    </p>
+                    <p style="color: #666; font-size: 1rem;">
+                        Tu registro ha sido completado correctamente.<br>
+                        ¡Bienvendio a Softparty! 🚀
+                    </p>
+                `,
+                confirmButtonText: '¡Genial!',
+                confirmButtonColor: '#10b981',
+                showClass: {
+                    popup: 'animate__animated animate__bounceIn'
+                },
+                backdrop: `
+                    rgba(102, 126, 234, 0.4)
+                    left top
+                    no-repeat
+                `,
+                timer: 3500,
+                timerProgressBar: true
+            });
+        });
+    })();
+</script>
